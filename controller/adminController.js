@@ -21,8 +21,8 @@ export const adminLogin = async (req, res, next) => {
             return res.status(400).json({ success: false, message: 'Invalid credentials' });
         }
 
-        const token = generateToken(email);
-        res.cookie('token', token);
+        const token = generateToken({ email}, 'admin' );
+        res.cookie('admin_token', token);
 
         res.json({ success: true, message: 'Admin logged in successfully' });
 
@@ -34,12 +34,36 @@ export const adminLogin = async (req, res, next) => {
 // Admin Logout
 export const adminLogout = async (req, res, next) => {
     try {
-        res.clearCookie('token');
+        res.clearCookie('admin_token');
         res.json({ success: true, message: 'Admin logged out successfully' });
     } catch (error) {
         res.status(error.status || 500).json({ message: error.message || 'Internal server error' });
     }
 };
+
+
+
+
+
+// export const getInstructorList = async (req, res, next) => {
+//     try {
+       
+//         const listofInstructor=await Instructor.find();
+        
+        
+//             res.json({sucess:true,message:' fetched courselist',data:listofInstructor});
+    
+//         }
+    
+//          catch (error) {
+//             res.status(error.status ||500).json({message:error.message ||'internal server error'});
+            
+    
+//         }
+//     }
+
+
+
 
 
 export const deleteInstructor = async (req, res, next) => {
@@ -52,7 +76,7 @@ export const deleteInstructor = async (req, res, next) => {
             return res.status(404).json({ success: false, message: 'Instructor not found' });
         }
 
-        res.clearCookie('token');
+        res.clearCookie('admin_token');
         res.json({ success: true, message: 'Instructor deleted successfully' });
     } catch (error) {
         res.status(error.status || 500).json({ message: error.message || 'Internal server error' });

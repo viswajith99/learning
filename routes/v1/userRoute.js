@@ -7,7 +7,7 @@ import { upload } from '../../middleware/uploadMiddleware.js';
 
 const router=express.Router()
 
-router.post('/create', upload.single('profile'), createUser);
+router.post('/signup', upload.single('profile'), createUser);
 
 router.put('/update',authUser,updateUser)
 router.get('/userlist',authInstructor,authAdmin,getUserList)

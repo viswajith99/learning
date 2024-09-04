@@ -1,12 +1,12 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
+
 const courseSchema = mongoose.Schema({
     title: {
         type: String,
         required: true
     },
     desc: {
-        type: [String,'please enter string'],
-        
+        type: [String],
     },
     image: {
         type: String,
@@ -16,12 +16,11 @@ const courseSchema = mongoose.Schema({
         type: String,
         required: true
     },
-    
     instructor: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Instructor',
-        required:true
+        required: true
     }
+});
 
-})
 export const Course = mongoose.model('Course', courseSchema);

@@ -1,29 +1,26 @@
-export const authAdmin=(req,res,next)=>{
+import jwt from 'jsonwebtoken';
+
+export const authAdmin = (req, res, next) => {
     try {
-        const {token}=req.cookies
-        if(!token){
-            return  res.status(404).json({ success: false, message: 'user not authinticated ' });
+        const { admin_token } = req.cookies;
+
+
+   
+        if (!admin_token) {
+            return res.status(401).json({ success: false, message: 'User not authenticated' });
         }
-        const tokenVerified=jwt.verify(token,process.env.JWT_SECRET_KEY)
-        console.log('tokenverified',tokenVerified);
+
+        const tokenVerified = jwt.verify(admin_token, process.env.JWT_SECRET_KEY);
         
-
-        if(!tokenVerified){
-            return  res.status(404).json({ success: false, message: 'user not authinticated ' });
-
-
-
+    
+        if (!tokenVerified || tokenVerified.role !== 'admin') {
+            return res.status(403).json({ success: false, message: 'Access forbidden' });
         }
-        if(tokenVerified.role !=="admin")
-        {
-            return  res.status(404).json({ success: false, message: 'user not authinticated ' });
-        }
-        req.user=tokenVerified
 
+        req.user = tokenVerified;
         next();
-
     } catch (error) {
-         console.log('error');
-         
+        console.error('Token verification error:', error);
+        return res.status(401).json({ success: false, message: 'User not authenticated' });
     }
-}
+};

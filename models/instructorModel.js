@@ -26,5 +26,3 @@ const instructorSchema = new mongoose.Schema({
 
 export const Instructor = mongoose.models.Instructor || mongoose.model('Instructor', instructorSchema);
 
-
-

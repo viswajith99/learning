@@ -43,7 +43,7 @@ export const createCourse = async (req, res, next) => {
       });
 
       console.log(uploadResult);
-console.log(req.body,'body.......');
+console.log(req.body);
 
       // Ensure all required fields are provided
       if (!title || !desc || !duration || !instructorName) {

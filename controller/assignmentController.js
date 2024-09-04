@@ -5,34 +5,54 @@ export const createAssignment = async (req, res) => {
     try {
         const { title, description, course, dueDate, maxMarks } = req.body;
 
-
-        if(!title || !description || !course ||!dueDate|| !maxMarks ){
+        // Validate all required fields
+        if (!title || !description || !course || !dueDate || !maxMarks) {
             return res.status(400).json({ success: false, message: 'All fields are required' });
         }
 
-       
+        // Check for file upload
+        if (!req.file) {
+            return res.status(400).json({ success: false, message: 'No file uploaded' });
+        }
+
+        // Log the uploaded file information for debugging
+        console.log('Uploaded file:', req.file);
+
+        // Upload the file to Cloudinary
+        const uploadResult = await cloudinaryInstance.uploader.upload(req.file.path).catch((error) => {
+            console.error('Cloudinary upload error:', error);
+            return res.status(500).json({ success: false, message: 'File upload failed' });
+        });
+
+        if (!uploadResult || !uploadResult.url) {
+            return res.status(500).json({ success: false, message: 'File upload failed' });
+        }
+
+        // Create new assignment instance
         const assignment = new Assignment({
             title,
             description,
-            course,
+            course:course._id,
             dueDate,
-            maxMarks
+            maxMarks,
+            fileLink: uploadResult.url // Store the Cloudinary URL
         });
 
-        console.log(".....",req.body);
+        // Log request body for debugging
+        console.log("Request Body:", req.body);
+
+        // Save the assignment to the database
         await assignment.save();
 
-        
-        res.status(201).json(assignment);
-       
+        // Respond with success message and assignment data
+        res.status(201).json({ success: true, message: 'Assignment created successfully', data: assignment });
+
     } catch (error) {
-        console.log("error",error);
-        
-       
-        res.status(400).json({ error: error.message });
+        // Log error and respond with failure message
+        console.log("Error:", error);
+        res.status(500).json({ success: false, message: error.message || 'Internal server error' });
     }
 };
-
 
 
 export const submitAssignment = async (req, res) => {
@@ -40,7 +60,6 @@ export const submitAssignment = async (req, res) => {
         const { userId } = req.body;
         const { assignmentId } = req.params;
 
-        // Check if a file is uploaded
         if (!req.file) {
             return res.status(400).json({ success: false, message: 'No file uploaded' });
         }
@@ -54,8 +73,9 @@ export const submitAssignment = async (req, res) => {
             return res.status(500).json({ success: false, message: 'File upload failed' });
         });
 
-       
-        console.log('Cloudinary upload result:', uploadResult);
+        if (!uploadResult || !uploadResult.url) {
+            return res.status(500).json({ success: false, message: 'File upload failed' });
+        }
 
         const assignment = await Assignment.findById(assignmentId);
         if (!assignment) {
@@ -78,6 +98,7 @@ export const submitAssignment = async (req, res) => {
         res.status(500).json({ success: false, message: error.message || 'Internal server error' });
     }
 };
+
 
 
 export const getAssignmentsByCourse = async (req, res) => {

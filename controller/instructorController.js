@@ -61,6 +61,8 @@ export const createInstructor= async (req, res, next) => {
 export const instructorLogin = async (req, res, next) => {
     try {
         const {  email, password } = req.body
+        console.log(req.body);
+        
         if (!email || !password  ) {
             return res.status(400).json({ success: true, message: 'require all files' });
             
@@ -79,8 +81,8 @@ export const instructorLogin = async (req, res, next) => {
 
 
 
-        const token = generateToken({email})
-        res.cookie('token', token)
+        const token = generateToken(email,"instructor")
+        res.cookie('Instructor_token', token)
         res.json({ sucess:true,message:'user login sucessfully'
         })
 
@@ -110,7 +112,7 @@ export const instructorProfile = async (req, res, next) => {
 export const checkInstuctor = async (req, res, next) => {
     try {
        
-       const user=req.User
+       const user=req.user
        if(!user)
         res.json({sucess:true,message:'user fetched',data:useData})
 

@@ -22,7 +22,7 @@ export const createQuiz = async (req, res) => {
 
         await quiz.save();
         res.status(201).json(quiz);
-        console.log('nnnnnn',req.body);
+      
         
     } catch (error) {
         res.status(400).json({ error: error.message });

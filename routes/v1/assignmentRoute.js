@@ -1,11 +1,13 @@
 import express from 'express';
 import { createAssignment, deleteAssignment, getAssignmentById, getAssignmentsByCourse, submitAssignment, updateAssignment } from '../../controller/assignmentController.js';
-// import { authInstructor } from '../../middleware/authInstructor.js';
+import { authInstructor } from '../../middleware/authInstructor.js';
+import { upload } from '../../middleware/uploadMiddleware.js';
+
 
 const router = express.Router();
 
 
-router.post('/create', createAssignment);
+router.post('/create',authInstructor, upload.single('file'), createAssignment);
 router.post('submit',submitAssignment)
 
 
